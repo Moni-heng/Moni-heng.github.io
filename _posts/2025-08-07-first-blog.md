@@ -71,6 +71,5 @@ STM32F103系列微控制器的I²C外设**全部位于APB1（Advanced Peripheral
 
 通过以上分析，可以明确STM32F103的I²C外设总线位置及其设计考量，为实际应用提供指导。
 
-
-![image](https://img2024.cnblogs.com/blog/3685340/202508/3685340-20250806222108047-363114478.png)
+![image](img/home-bg.jpg)
 

@@ -1,10 +1,10 @@
 # Site settings
 title: Moni Blog
-SEOTitle: Moni的博客 | Hux Blog
+SEOTitle: Moni的博客 | Moni Blog
 header-img: img/home-bg.jpg
 email: 1602377328@qq.com
 description: "这里是 @Moni 的个人博客，一起做个白日梦 | STAY GOLD PONY BOY"
-keyword: "黄玄, Hux黄玄, Hux, 鬼栈, huxpro, @huxpro, 黄玄的博客, Hux Blog, 博客, 个人网站, 互联网, Web, JavaScript, React, React Native, 前端, 设计"
+keyword: "Monica, NJFU, 上岸, 蓝桥杯, 硬件, IoT, blog, 博客, 个人网站, 互联网, Web, JavaScript, React, React Native, 前端, 设计"
 url: "" # your host, for absolute URL
 baseurl: "" # for example, '/blog' if your blog hosted on 'host/blog'
 
@@ -13,10 +13,10 @@ future: true
 
 # SNS settings
 RSS: false
-weibo_username: huxpro
-zhihu_username: huxpro
-github_username: huxpro
-twitter_username: huxpro
+#weibo_username: huxpro
+zhihu_username: 毛抑恒
+github_username: Moni-heng
+#twitter_username: huxpro
 #facebook_username:  huxpro
 #linkedin_username:  firstname-lastname-idxxxx
 

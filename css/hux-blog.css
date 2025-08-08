@@ -1760,6 +1760,7 @@ img::-moz-selection {
 }
 
 /* 鼠标悬停时显示二维码 */
-.wechat-link:hover .wechat-qrcode {
+.wechat-link:active .wechat-qrcode,  /* 点击触发 */
+.wechat-link:hover .wechat-qrcode {  /* 悬停触发（桌面端） */
   display: block;
 }

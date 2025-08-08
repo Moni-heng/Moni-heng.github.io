@@ -30,20 +30,20 @@
   </li>
   {% endif %}
 <!-- 在现有社交图标列表中添加 -->
+<!-- 正确的公众号图标代码 -->
 {% if site.wechat %}
 <li>
-  <!-- 公众号图标 -->
-  <a target="_blank" href="javascript:;" title="{{ site.wechat_name | default: '微信公众号' }}" class="wechat-link">
+  <a href="javascript:;" class="wechat-link" title="{{ site.wechat_name | default: '微信公众号' }}">
     <span class="fa-stack fa-lg">
       <i class="fa fa-circle fa-stack-2x"></i>
-      <i class="fa fa-weixin fa-stack-1x fa-inverse"></i>  <!-- 使用Font Awesome的微信图标 -->
+      <i class="fa fa-weixin fa-stack-1x fa-inverse"></i>
     </span>
+    <!-- 二维码容器 -->
+    <div class="wechat-qrcode">
+      <img src="{{ site.wechat_qrcode }}" alt="微信公众号二维码" width="120">
+      <p>{{ site.wechat_name | default: '公众号名称' }}</p>
+    </div>
   </a>
-  <!-- 公众号二维码（点击图标显示） -->
-  <div class="wechat-qrcode">
-    <img src="{{ site.wechat_qrcode }}" alt="微信公众号二维码" width="120">
-    <p>{{ site.wechat_name | default: '公众号名称' }}</p>
-  </div>
 </li>
 {% endif %}
 

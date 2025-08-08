@@ -17,9 +17,10 @@ RSS: false
 zhihu_username: 93-81-93-94-13
 bilibili_username: 1735859432
 github_username: Moni-heng
-wechat: true  # 控制是否显示公众号图标
-wechat_qrcode: /img/wechat-qrcode.jpg  # 公众号二维码图片路径（建议放在 img 文件夹下）
-
+# 微信公众号配置
+wechat_username: true  # 启用微信图标
+wechat_qrcode: /img/wechat-qrcode.jpg  # 二维码图片路径（使用绝对路径）
+wechat_name: "毛抑恒的白日梦"  # 二维码下方显示的名称
 
 # Build settings
 # from 2016, 'pygments' is unsupported on GitHub Pages. Use 'rouge' for highlighting instead.

@@ -7,6 +7,7 @@ catalog:      true
 tags:
     - Web
     - JavaScript
+    - lain
 ---
 
 > 在STM32F103微控制器中，关于I²C（Inter-Integrated Circuit）外设的总线位置，确实需要明确其硬件架构中的总线分布。以下是针对问题的详细分析：

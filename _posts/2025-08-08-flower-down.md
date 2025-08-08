@@ -8,15 +8,17 @@ tags:
     - 高中
     - 呓语
     - 随笔
+    - lain
 ---
 
 > 下面三篇文章是我在很久之前就写好的，记录了当时或明或暗的心情，一些不甘与不舍。它们都很晦涩，没有明确的事情，好多东西现在并不适用，都是过时的，关键处戛然而止，但我却不想忘记，一个一个写下来。
 
 ---
 
-![图片加载失败><](https://mmbiz.qpic.cn/mmbiz_png/IiaXCD6Tq1uNlduNGkSASiamXQ3QicibMhNlGZVTw2pNvLg39p0hdMYkjejibfTfYAQLibVzCicDtsibTIQicG5ZlCMQCicQ/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1 "一半开出花")
+![图片加载失败](https://Moni-heng.github.io/img/25-08-08/2025-08-08 (2).png  "一半开出花")
+
 ### **一半开出花，一半作泥沙**
-<blockquote>
+
 照亮前行道路的光，可否驻留久一点，聊以抚慰旅人的心。
 
 也许是脆弱者，蜡烛会一熄就灭，燃烧时间不够长；也许是最高尚的，流着眼泪，默默散发光与热。世间大抵皆矛盾存在，好物不曾久远，而碎玻璃即使数年过去，也会叫人扎破血皮。
@@ -30,13 +32,13 @@ tags:
 的确，效仿万人走过的道路，虽平稳坦荡，却无比老旧乏味，惟有自己所居一隅。心头那盏蜡烛明亮起来了，它含着眼泪。是的，这次我不会让它消耗了。
 
 唯有一隅，可以静听道路上的浮躁，可以品味心中的甘苦。
-</blockquote>
 
 ---
 
-![图片加载失败><](https://mmbiz.qpic.cn/mmbiz_png/IiaXCD6Tq1uNlduNGkSASiamXQ3QicibMhNlu1nCxCUAzntWXyae4jIibOYPm0vRBfKTVbicebDzjgnpbv8ZxgM12T6w/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1 "青春永驻")
+![图片加载失败><](https://Moni-heng.github.io/img/25-08-08/2025-08-08 (3).png "青春永驻")
+
 ### **当华美的叶片落尽，生命的脉络才历历可见**
-<blockquote>
+
 可能是当时的眼泪未落尽，才使得如今竟啜泣不已。
 
 白露已至，天远气清，在人们的脸上，只会有喜悦和平淡。哦，奔赴远方的人们，都不会将脚步放慢下来。
@@ -50,13 +52,13 @@ tags:
 驻足月下，心中还在为叶儿的脉络颤抖。人在洗尽铅华后留下的是否也只是这一副脉络 ，又将骨架示以众人自己的倔强。这脉络，是将生命的历程清晰地展现在世人面前。念及于此，不觉加快了脚步。
 
 叶是否也映照了孤光。
-</blockquote>
 
 ---
 
-![图片加载失败><](https://mmbiz.qpic.cn/mmbiz_png/IiaXCD6Tq1uNlduNGkSASiamXQ3QicibMhNlpYe29GMYf9kicsuicDBpMicByZjMYPMA9wQPnS3moLbagzJVlDRaJbuibQ/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1 "徐州一中化竞记录")
+![图片加载失败><](https://Moni-heng.github.io/img/25-08-08/2025-08-08 (4).png "徐州一中化竞记录")
+
 ### **敏安，定格于下午**
-<blockquote>
+
 叮叮叮，伴随着一声声闹铃声响，我知道，是该出发了，我无比接近青春的终端。
 
 清晨四点五十分，急匆匆穿好衣服，发现一湖秋水未眠。
@@ -74,5 +76,6 @@ tags:
 我永远记得那个下午，那穿梭于高速公路上景物的目不暇接，那放在包里未得及做的习题，却一并消失在寂静的敏安。
 
 如梦一般，好像是一切都走到了尽头，失落感随着校门口的出现重把我拉回到现实。坚持热爱的东西忽然，就，截止了，心里那份引以为傲的幻想也一并消失。回忆，仿佛在此时都成奢望......
-</blockquote>
+
+---
 

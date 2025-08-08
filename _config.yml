@@ -17,7 +17,7 @@ RSS: false
 zhihu_username: 93-81-93-94-13
 bilibili_username: 1735859432
 github_username: Moni-heng
-wechat: false  # 控制是否显示公众号图标
+wechat: true  # 控制是否显示公众号图标
 wechat_qrcode: /img/wechat-qrcode.jpg  # 公众号二维码图片路径（建议放在 img 文件夹下）
 
 

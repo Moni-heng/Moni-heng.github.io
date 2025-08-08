@@ -1732,7 +1732,65 @@ img::-moz-selection {
   color: white;
   font-size: 24px;
 }
-/* 公众号二维码样式 - 加入到 hux-blog.css 末尾 */
+
+
+
+/* 微信图标容器：避免二维码占位影响对齐 */
+.wechat-item {
+  position: relative; /* 作为二维码的定位容器 */
+  display: inline-block; /* 确保与其他图标在同一行 */
+}
+
+/* 二维码样式：默认隐藏，点击时显示 */
+.wechat-qrcode {
+  display: none; /* 默认隐藏 */
+  position: absolute; /* 绝对定位，不影响其他图标 */
+  bottom: 100%; /* 显示在图标上方（避免下方占位） */
+  left: 50%;
+  transform: translateX(-50%); /* 水平居中对齐图标 */
+  margin-bottom: 10px; /* 与图标保持间距 */
+  background: white;
+  padding: 10px;
+  border-radius: 4px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+  z-index: 999; /* 确保显示在其他元素上方 */
+  text-align: center;
+  width: 140px;
+}
+
+/* 二维码图片样式 */
+.wechat-qrcode img {
+  width: 120px;
+  height: 120px;
+  margin: 0 auto 5px;
+}
+
+/* 点击图标时显示二维码（通过:active触发） */
+.wechat-link:active .wechat-qrcode {
+  display: block;
+}
+
+/* hover效果（可选，增强桌面端体验） */
+@media (min-width: 768px) {
+  .wechat-link:hover .wechat-qrcode {
+    display: block;
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* /* 公众号二维码样式 - 加入到 hux-blog.css 末尾 */
 .wechat-link {
   position: relative; /* 关键：确保二维码相对图标定位 */
   display: inline-block; /* 避免点击区域过小 */
@@ -1763,4 +1821,4 @@ img::-moz-selection {
 .wechat-link:active .wechat-qrcode,  /* 点击触发 */
 .wechat-link:hover .wechat-qrcode {  /* 悬停触发（桌面端） */
   display: block;
-}
+} */

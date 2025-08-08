@@ -30,21 +30,16 @@
   </li>
   {% endif %}
 <!-- 在现有社交图标列表中添加 -->
-{% if site.wechat %}
-<li>
-  <a href="javascript:;" class="wechat-link" title="{{ site.wechat_name | default: '微信公众号' }}">
-    <span class="fa-stack fa-lg">
-      <i class="fa fa-circle fa-stack-2x"></i>
-      <i class="fa fa-weixin fa-stack-1x fa-inverse"></i>
-    </span>
-    <!-- 二维码容器：默认绝对隐藏 -->
-    <div class="wechat-qrcode">
-      <img src="{{ site.wechat_qrcode }}" alt="微信公众号二维码" width="120">
-      <p>{{ site.wechat_name | default: '公众号名称' }}</p>
-    </div>
-  </a>
-</li>
-{% endif %}
+  {% if site.wechat_username %}
+  <li>
+    <a target="_blank" href="https://raw.githubusercontent.com/Moni-heng/Moni-heng.github.io/refs/heads/master/img/wechat-qrcode.jpg">
+      <span class="fa-stack fa-lg">
+        <i class="fa fa-circle fa-stack-2x"></i>
+        <i class="fa fa-weixin fa-stack-1x fa-inverse"></i>
+      </span>
+    </a>
+  </li>
+  {% endif %}
 
 
   <!-- 在这里插入B站代码 -->

@@ -4,6 +4,7 @@ title:        "拾一瓣落花"
 subtitle: "记录于21年秋"
 author:       "Moni"
 header-style: text
+header-img: "img/home-bg.jpg"
 catalog:      true
 tags:
     - 高中

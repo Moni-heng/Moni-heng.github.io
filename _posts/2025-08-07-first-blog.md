@@ -1,6 +1,7 @@
 ---
 layout:       post
 title:        "I²Cw外设的总线位置"
+subtitle: "第一次发文测试"
 author:       "Moni"
 header-style: text
 catalog:      true

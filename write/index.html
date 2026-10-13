@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
@@ -8,7 +8,83 @@
 <link href="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.snow.css" rel="stylesheet">
 <link rel="stylesheet" href="./style.css">
 </head>
+<body> -->
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Write</title>
+
+<link href="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.snow.css" rel="stylesheet">
+
+<!-- 字体：思源宋体 / 思源黑体 / 站酷小薇 -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&family=Noto+Sans+SC:wght@400;700&family=ZCOOL+XiaoWei&display=swap" rel="stylesheet">
+
+<!-- 霞鹜文楷（国内可用 CDN） -->
+<link href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-webfont@1.1.0/style.css" rel="stylesheet">
+
+<link rel="stylesheet" href="./style.css">
+</head>
 <body>
+
+<canvas id="bg-rain" class="bg-canvas active"></canvas>
+<canvas id="bg-snow" class="bg-canvas"></canvas>
+
+<header class="topbar">
+  <div class="brand">Write</div>
+
+  <div class="weather-switch">
+    <button data-weather="rain" class="active">雨</button>
+    <button data-weather="snow">雪</button>
+  </div>
+
+  <div class="intensity">
+    <span class="label">强度</span>
+    <input type="range" id="intensity" min="0" max="100" value="60">
+  </div>
+
+  <!-- 字体选择器 -->
+  <div class="font-switch">
+    <button data-font="sans" class="active" title="无衬线">简</button>
+    <button data-font="serif" title="思源宋体">宋</button>
+    <button data-font="kai"   title="霞鹜文楷">楷</button>
+    <button data-font="xiao"  title="站酷小薇">雅</button>
+  </div>
+
+  <div class="actions">
+    <button id="export-btn">导出 .md</button>
+    <button id="exit-btn">退出</button>
+  </div>
+</header>
+
+<main class="glass-panel">
+  <div id="editor"></div>
+</main>
+
+<footer class="statusbar">
+  <span id="wordcount">0 字</span>
+  <span class="dot">·</span>
+  <span id="readtime">0 分钟阅读</span>
+</footer>
+
+<script>
+  window.__BASEURL__ = '{{ site.baseurl }}' || '';
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/turndown@7.2.0/dist/turndown.js"></script>
+<script src="./shader-rain.js"></script>
+<script src="./shader-snow.js"></script>
+<script src="./app.js"></script>
+</body>
+</html>
+
+
+
 
 <!-- 两层 WebGL 背景：雨 / 雪 -->
 <canvas id="bg-rain" class="bg-canvas active"></canvas>

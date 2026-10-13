@@ -1,4 +1,4 @@
-// 雨天 —— 基于 Heartfelt by BigWings 改造（去心形、去闪电、持续下雨）
+// 雨天 —— Heartfelt 改造版（明亮通透）
 const RAIN_FRAG = `#version 300 es
 precision highp float;
 out vec4 fragColor;
@@ -92,8 +92,9 @@ void main() {
     float t = T * .2;
     float rainAmount = uAmount;
 
-    float maxBlur = mix(2., 4., rainAmount);
-    float minBlur = 2.;
+    // 更轻的雾化 —— 玻璃更通透
+    float maxBlur = mix(1.2, 2.6, rainAmount);
+    float minBlur = 1.0;
 
     uv *= 1.5;
     t *= .25;
@@ -108,11 +109,13 @@ void main() {
     float focus = mix(maxBlur - c.y, minBlur, S(.1, .2, c.x));
     vec3 col = textureLod(iChannel0, UV + n, focus).rgb;
 
+    // 轻微暖调，去掉原来的蓝
     float colFade = sin(T * .1) * .5 + .5;
-    col *= mix(vec3(1.), vec3(.8, .9, 1.3), colFade);
+    col *= mix(vec3(1.), vec3(1.05, 1.02, 0.95), colFade);
 
+    // 减弱的 vignette
     UV -= .5;
-    col *= 1. - dot(UV, UV) * 0.6;
+    col *= 1. - dot(UV, UV) * 0.35;
 
     fragColor = vec4(col, 1.);
 }

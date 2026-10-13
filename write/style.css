@@ -162,23 +162,8 @@ html, body {
   opacity: 1;
 }
 
-.ql-container.ql-snow {
-  border: none !important;
-  flex: 1;
-  overflow: hidden;
-  font-size: 17px;
-  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC",
-               "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
-}
 
-.ql-editor {
-  padding: 32px 48px 60px !important;
-  color: rgba(255, 255, 255, 0.92);
-  line-height: 1.9;
-  font-size: 17px;
-  overflow-y: auto;
-  height: 100%;
-}
+
 .ql-editor::-webkit-scrollbar { width: 8px; }
 .ql-editor::-webkit-scrollbar-thumb {
   background: rgba(255, 255, 255, 0.1);

@@ -246,3 +246,29 @@ html, body {
   .intensity { display: none; }
   .topbar { gap: 12px; padding: 0 14px; }
 }
+/* 字体选择器 */
+.font-switch {
+  display: flex;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 8px;
+  padding: 3px;
+  gap: 2px;
+}
+.font-switch button {
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.6);
+  padding: 5px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all .2s;
+  min-width: 28px;
+}
+.font-switch button.active {
+  background: rgba(255, 255, 255, 0.16);
+  color: #fff;
+}
+.font-switch button:hover:not(.active) {
+  color: rgba(255, 255, 255, 0.9);
+}

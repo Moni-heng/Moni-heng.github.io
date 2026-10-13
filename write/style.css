@@ -272,3 +272,20 @@ html, body {
 .font-switch button:hover:not(.active) {
   color: rgba(255, 255, 255, 0.9);
 }
+.ql-container.ql-snow {
+  border: none !important;
+  flex: 1;
+  overflow: hidden;
+  font-size: 17px;
+  font-family: inherit;   /* 由 JS 动态切换 */
+}
+
+.ql-editor {
+  padding: 32px 48px 60px !important;
+  color: rgba(255, 255, 255, 0.94);
+  line-height: 1.95;
+  font-size: 17px;
+  overflow-y: auto;
+  height: 100%;
+  font-family: inherit;
+}

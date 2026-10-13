@@ -1,5 +1,6 @@
 /* =========================================================
  *  WebGL 背景 + Quill 编辑器 + 天气切换 + 字体切换 + 导出
+ *  + 48 小时暂存
  * ========================================================= */
 
 const VERT = `#version 300 es
@@ -7,6 +8,10 @@ in vec2 aPos;
 void main() {
   gl_Position = vec4(aPos, 0.0, 1.0);
 }`;
+
+/* ---------- 暂存配置 ---------- */
+const DRAFT_KEY = 'write_draft_v1';
+const TTL_MS = 48 * 60 * 60 * 1000;   // 48 小时
 
 /* ---------- WebGL 工具 ---------- */
 
@@ -40,9 +45,8 @@ function createRainTexture(gl) {
   c.height = 1024;
   const ctx = c.getContext('2d');
 
-  // 天空到地面的明亮青绿渐变
   const grad = ctx.createLinearGradient(0, 0, 0, 1024);
-  grad.addColorStop(0.00, '#a8c0a6');  // 顶部淡灰绿（天光）
+  grad.addColorStop(0.00, '#a8c0a6');
   grad.addColorStop(0.25, '#88a888');
   grad.addColorStop(0.55, '#5d8064');
   grad.addColorStop(0.80, '#3d5a45');
@@ -50,7 +54,6 @@ function createRainTexture(gl) {
   ctx.fillStyle = grad;
   ctx.fillRect(0, 0, 1024, 1024);
 
-  // 树影：暗绿色柔光斑点
   for (let i = 0; i < 55; i++) {
     const x = Math.random() * 1024;
     const y = 200 + Math.random() * 824;
@@ -63,7 +66,6 @@ function createRainTexture(gl) {
     ctx.fillRect(0, 0, 1024, 1024);
   }
 
-  // 亮色光斑（透过树叶的天光）
   for (let i = 0; i < 22; i++) {
     const x = Math.random() * 1024;
     const y = Math.random() * 600;
@@ -75,7 +77,6 @@ function createRainTexture(gl) {
     ctx.fillRect(0, 0, 1024, 1024);
   }
 
-  // 轻微噪点，让玻璃模糊采样有质感
   const img = ctx.getImageData(0, 0, 1024, 1024);
   for (let i = 0; i < img.data.length; i += 4) {
     const n = (Math.random() - 0.5) * 14;
@@ -263,6 +264,84 @@ document.addEventListener('DOMContentLoaded', () => {
     },
   });
 
+  /* =====================================================
+   *  4.5 暂存逻辑（48 小时滑动过期）
+   * ===================================================== */
+
+  function readDraft() {
+    try {
+      const raw = localStorage.getItem(DRAFT_KEY);
+      if (!raw) return null;
+      const data = JSON.parse(raw);
+      if (!data || typeof data.lastVisit !== 'number') return null;
+
+      // 超过 48 小时没访问过 → 清掉
+      if (Date.now() - data.lastVisit > TTL_MS) {
+        localStorage.removeItem(DRAFT_KEY);
+        return null;
+      }
+      return data;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function writeDraft() {
+    try {
+      const data = {
+        delta: quill.getContents(),
+        savedAt: Date.now(),
+        lastVisit: Date.now(),
+      };
+      localStorage.setItem(DRAFT_KEY, JSON.stringify(data));
+    } catch (e) {
+      // 存储满了就忽略，不阻塞写作
+    }
+  }
+
+  function touchDraft() {
+    // 只刷新 lastVisit，不改内容
+    try {
+      const raw = localStorage.getItem(DRAFT_KEY);
+      if (!raw) return;
+      const data = JSON.parse(raw);
+      data.lastVisit = Date.now();
+      localStorage.setItem(DRAFT_KEY, JSON.stringify(data));
+    } catch (e) {}
+  }
+
+  function clearDraft() {
+    try { localStorage.removeItem(DRAFT_KEY); } catch (e) {}
+  }
+
+  // 打开时恢复草稿
+  const draft = readDraft();
+  if (draft && draft.delta) {
+    quill.setContents(draft.delta);
+    // 光标放到末尾，方便继续写
+    const len = quill.getLength();
+    quill.setSelection(len, 0);
+  }
+  // 打开界面就刷新删除时间
+  touchDraft();
+
+  // 编辑时防抖保存
+  let saveTimer = null;
+  quill.on('text-change', () => {
+    if (saveTimer) clearTimeout(saveTimer);
+    saveTimer = setTimeout(writeDraft, 600);
+  });
+
+  // 关闭前强制保存一次（防止防抖还没触发就关了）
+  window.addEventListener('beforeunload', () => {
+    if (saveTimer) {
+      clearTimeout(saveTimer);
+      writeDraft();
+    }
+  });
+
+  /* ===================================================== */
+
   /* 5. 字数 & 阅读时长 */
   const wordcountEl = document.getElementById('wordcount');
   const readtimeEl  = document.getElementById('readtime');
@@ -299,23 +378,17 @@ document.addEventListener('DOMContentLoaded', () => {
     a.click();
     document.body.removeChild(a);
     setTimeout(() => URL.revokeObjectURL(url), 1000);
+    // 导出后暂存保留，下次打开还能继续改
   });
 
-  /* 7. 退出：清空 + 回首页 */
+  /* 7. 退出：清空暂存 + 回首页 */
   document.getElementById('exit-btn').addEventListener('click', () => {
     if (quill.getText().trim().length > 0) {
-      if (!confirm('内容不会保存，确定退出？')) return;
+      if (!confirm('退出会清空本地暂存，确定？')) return;
     }
     quill.setContents([]);
+    clearDraft();
     const base = (window.__BASEURL__ || '').replace(/\/$/, '');
     window.location.href = base + '/';
-  });
-
-  /* 8. 离开页面前提醒（不保存） */
-  window.addEventListener('beforeunload', (e) => {
-    if (quill.getText().trim().length > 0) {
-      e.preventDefault();
-      e.returnValue = '';
-    }
   });
 });

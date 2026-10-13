@@ -1,5 +1,5 @@
 /* =========================================================
- *  WebGL 背景 + Quill 编辑器 + 天气切换 + 导出
+ *  WebGL 背景 + Quill 编辑器 + 天气切换 + 字体切换 + 导出
  * ========================================================= */
 
 const VERT = `#version 300 es
@@ -33,32 +33,55 @@ function createProgram(gl, vs, fs) {
   return p;
 }
 
-/* 用 Canvas2D 生成一张渐变天空，作为玻璃后的“景物”纹理 */
-function createSkyTexture(gl, type) {
+/* 雨景纹理：明亮南方雨季，青绿 + 树影 */
+function createRainTexture(gl) {
   const c = document.createElement('canvas');
-  c.width = 512;
-  c.height = 512;
+  c.width = 1024;
+  c.height = 1024;
   const ctx = c.getContext('2d');
 
-  const grad = ctx.createLinearGradient(0, 0, 0, 512);
-  if (type === 'rain') {
-    grad.addColorStop(0.0, '#141a26');
-    grad.addColorStop(0.5, '#222c40');
-    grad.addColorStop(1.0, '#303c54');
-  } else {
-    grad.addColorStop(0.0, '#0e1420');
-    grad.addColorStop(0.5, '#1a2438');
-    grad.addColorStop(1.0, '#2a3650');
-  }
+  // 天空到地面的明亮青绿渐变
+  const grad = ctx.createLinearGradient(0, 0, 0, 1024);
+  grad.addColorStop(0.00, '#a8c0a6');  // 顶部淡灰绿（天光）
+  grad.addColorStop(0.25, '#88a888');
+  grad.addColorStop(0.55, '#5d8064');
+  grad.addColorStop(0.80, '#3d5a45');
+  grad.addColorStop(1.00, '#2a4232');
   ctx.fillStyle = grad;
-  ctx.fillRect(0, 0, 512, 512);
+  ctx.fillRect(0, 0, 1024, 1024);
 
-  const img = ctx.getImageData(0, 0, 512, 512);
+  // 树影：暗绿色柔光斑点
+  for (let i = 0; i < 55; i++) {
+    const x = Math.random() * 1024;
+    const y = 200 + Math.random() * 824;
+    const r = 60 + Math.random() * 180;
+    const g = ctx.createRadialGradient(x, y, 0, x, y, r);
+    g.addColorStop(0, 'rgba(20, 45, 28, 0.45)');
+    g.addColorStop(0.6, 'rgba(20, 45, 28, 0.15)');
+    g.addColorStop(1, 'rgba(20, 45, 28, 0)');
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, 1024, 1024);
+  }
+
+  // 亮色光斑（透过树叶的天光）
+  for (let i = 0; i < 22; i++) {
+    const x = Math.random() * 1024;
+    const y = Math.random() * 600;
+    const r = 40 + Math.random() * 120;
+    const g = ctx.createRadialGradient(x, y, 0, x, y, r);
+    g.addColorStop(0, 'rgba(230, 245, 210, 0.30)');
+    g.addColorStop(1, 'rgba(230, 245, 210, 0)');
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, 1024, 1024);
+  }
+
+  // 轻微噪点，让玻璃模糊采样有质感
+  const img = ctx.getImageData(0, 0, 1024, 1024);
   for (let i = 0; i < img.data.length; i += 4) {
-    const noise = (Math.random() - 0.5) * 26;
-    img.data[i]     = Math.max(0, Math.min(255, img.data[i]     + noise));
-    img.data[i + 1] = Math.max(0, Math.min(255, img.data[i + 1] + noise));
-    img.data[i + 2] = Math.max(0, Math.min(255, img.data[i + 2] + noise));
+    const n = (Math.random() - 0.5) * 14;
+    img.data[i]     = Math.max(0, Math.min(255, img.data[i]     + n));
+    img.data[i + 1] = Math.max(0, Math.min(255, img.data[i + 1] + n));
+    img.data[i + 2] = Math.max(0, Math.min(255, img.data[i + 2] + n));
   }
   ctx.putImageData(img, 0, 0);
 
@@ -70,6 +93,18 @@ function createSkyTexture(gl, type) {
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+  return tex;
+}
+
+/* 雪景纹理：仅作占位（雪 shader 自己画背景） */
+function createPlaceholderTexture(gl) {
+  const tex = gl.createTexture();
+  gl.bindTexture(gl.TEXTURE_2D, tex);
+  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0,
+                gl.RGBA, gl.UNSIGNED_BYTE,
+                new Uint8Array([10, 15, 25, 255]));
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
   return tex;
 }
 
@@ -87,7 +122,7 @@ class WeatherCanvas {
       return;
     }
     const gl = this.gl;
-    this.program    = createProgram(gl, VERT, fragSrc);
+    this.program     = createProgram(gl, VERT, fragSrc);
     this.uResolution = gl.getUniformLocation(this.program, 'iResolution');
     this.uTime       = gl.getUniformLocation(this.program, 'iTime');
     this.uAmount     = gl.getUniformLocation(this.program, 'uAmount');
@@ -105,7 +140,9 @@ class WeatherCanvas {
     gl.enableVertexAttribArray(aPos);
     gl.vertexAttribPointer(aPos, 2, gl.FLOAT, false, 0, 0);
 
-    this.texture = createSkyTexture(gl, type);
+    this.texture = (type === 'rain')
+      ? createRainTexture(gl)
+      : createPlaceholderTexture(gl);
 
     this.resize();
     window.addEventListener('resize', () => this.resize());
@@ -152,6 +189,9 @@ class WeatherCanvas {
 /* ---------- 主逻辑 ---------- */
 
 document.addEventListener('DOMContentLoaded', () => {
+  /* 0. 默认字体 */
+  document.body.classList.add('font-sans');
+
   /* 1. 背景 */
   const rainCanvas = document.getElementById('bg-rain');
   const snowCanvas = document.getElementById('bg-snow');
@@ -190,7 +230,24 @@ document.addEventListener('DOMContentLoaded', () => {
   rain.setAmount(intensity.value / 100);
   snow.setAmount(intensity.value / 100);
 
-  /* 3. Quill 编辑器 */
+  /* 3. 字体切换 */
+  const FONT_CLASSES = ['font-sans', 'font-serif', 'font-kai', 'font-xiao'];
+
+  document.querySelectorAll('.font-switch button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const f = 'font-' + btn.dataset.font;
+      if (!FONT_CLASSES.includes(f)) return;
+
+      document.body.classList.remove(...FONT_CLASSES);
+      document.body.classList.add(f);
+
+      document.querySelectorAll('.font-switch button').forEach(b => {
+        b.classList.toggle('active', b === btn);
+      });
+    });
+  });
+
+  /* 4. Quill 编辑器 */
   const quill = new Quill('#editor', {
     theme: 'snow',
     placeholder: '开始写点什么…',
@@ -206,7 +263,7 @@ document.addEventListener('DOMContentLoaded', () => {
     },
   });
 
-  /* 4. 字数 & 阅读时长 */
+  /* 5. 字数 & 阅读时长 */
   const wordcountEl = document.getElementById('wordcount');
   const readtimeEl  = document.getElementById('readtime');
 
@@ -220,7 +277,7 @@ document.addEventListener('DOMContentLoaded', () => {
   quill.on('text-change', updateStats);
   updateStats();
 
-  /* 5. 导出 .md */
+  /* 6. 导出 .md */
   const turndown = new TurndownService({
     headingStyle: 'atx',
     hr: '---',
@@ -244,7 +301,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => URL.revokeObjectURL(url), 1000);
   });
 
-  /* 6. 退出：清空 + 回首页 */
+  /* 7. 退出：清空 + 回首页 */
   document.getElementById('exit-btn').addEventListener('click', () => {
     if (quill.getText().trim().length > 0) {
       if (!confirm('内容不会保存，确定退出？')) return;
@@ -254,7 +311,7 @@ document.addEventListener('DOMContentLoaded', () => {
     window.location.href = base + '/';
   });
 
-  /* 7. 离开页面前提醒（不保存） */
+  /* 8. 离开页面前提醒（不保存） */
   window.addEventListener('beforeunload', (e) => {
     if (quill.getText().trim().length > 0) {
       e.preventDefault();

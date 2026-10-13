@@ -1,4 +1,4 @@
-// 雪天 —— 复用 Heartfelt 玻璃框架，改造为落雪
+// 雪天 —— 飘雪 + 雪山夜景（完全重写）
 const SNOW_FRAG = `#version 300 es
 precision highp float;
 out vec4 fragColor;
@@ -6,108 +6,95 @@ out vec4 fragColor;
 uniform vec2  iResolution;
 uniform float iTime;
 uniform float uAmount;
-uniform sampler2D iChannel0;
 
-#define S(a, b, t) smoothstep(a, b, t)
-
-vec3 N13(float p) {
-    vec3 p3 = fract(vec3(p) * vec3(.1031, .11369, .13787));
-    p3 += dot(p3, p3.yzx + 19.19);
-    return fract(vec3((p3.x + p3.y) * p3.z,
-                      (p3.x + p3.z) * p3.y,
-                      (p3.y + p3.z) * p3.x));
+// 一维 hash
+float hash1(vec2 p) {
+    p = fract(p * vec2(123.34, 456.21));
+    p += dot(p, p + 45.32);
+    return fract(p.x * p.y);
 }
 
-float N(float t) {
-    return fract(sin(t * 12345.564) * 7658.76);
-}
+// 单层雪花
+float snowLayer(vec2 uv, float t, float scale, float speed, float sizeMul, float density) {
+    vec2 gv = uv * scale;
+    gv.y += t * speed;
 
-float Saw(float b, float t) {
-    return S(0., b, t) * S(1., b, t);
-}
+    vec2 id = floor(gv);
+    vec2 f  = fract(gv) - 0.5;
 
-vec2 SnowLayer(vec2 uv, float t) {
-    vec2 UV = uv;
-    uv.y += t * 0.15;
-    vec2 a = vec2(6., 1.);
-    vec2 grid = a * 2.;
-    vec2 id = floor(uv * grid);
-    float colShift = N(id.x);
-    uv.y += colShift;
-    id = floor(uv * grid);
-    vec3 n = N13(id.x * 35.2 + id.y * 2376.1);
-    vec2 st = fract(uv * grid) - vec2(.5, 0);
+    float rnd  = hash1(id);
+    float rnd2 = hash1(id + 7.3);
+    float rnd3 = hash1(id + 19.7);
 
-    float x = n.x - .5;
-    float y = UV.y * 20.;
-    float wiggle = sin(y + sin(y));
-    x += wiggle * (.5 - abs(x)) * (n.z - .5);
-    x *= .7;
-    float ti = fract(t * 0.5 + n.z);
-    y = (Saw(.85, ti) - .5) * .9 + .5;
-    vec2 p = vec2(x, y);
-    float d = length((st - p) * a.yx);
+    // 密度筛选
+    float mask = step(1.0 - density, rnd);
+    if (mask < 0.5) return 0.0;
 
-    float mainDrop = S(.5, .0, d);
+    // 水平摆动
+    float sway = sin(t * 0.5 + rnd3 * 6.283) * 0.18;
+    vec2 offset = vec2((rnd2 - 0.5) * 0.7 + sway,
+                       (rnd3 - 0.5) * 0.5);
 
-    float r = sqrt(S(1., y, st.y));
-    float cd = abs(st.x - x);
-    float trail = S(.30 * r, .20 * r * r, cd);
-    float trailFront = S(-.05, .05, st.y - y);
-    trail *= trailFront * r * r;
+    float d = length(f - offset);
+    float sz = (0.035 + rnd2 * 0.07) * sizeMul;
 
-    return vec2(mainDrop, trail);
-}
-
-float StaticSnow(vec2 uv, float t) {
-    uv *= 40.;
-    vec2 id = floor(uv);
-    uv = fract(uv) - .5;
-    vec3 n = N13(id.x * 107.45 + id.y * 3543.654);
-    vec2 p = (n.xy - .5) * .7;
-    float d = length(uv - p);
-    float fade = Saw(.08, fract(t * 0.5 + n.z));
-    return S(.4, 0., d) * fract(n.z * 10.) * fade;
-}
-
-vec2 Snow(vec2 uv, float t, float l0, float l1, float l2) {
-    float s = StaticSnow(uv, t) * l0;
-    vec2 m1 = SnowLayer(uv, t) * l1;
-    vec2 m2 = SnowLayer(uv * 1.85, t) * l2;
-    float c = s + m1.x + m2.x;
-    c = S(.3, 1., c);
-    return vec2(c, max(m1.y * l0, m2.y * l1));
+    return smoothstep(sz, 0.0, d);
 }
 
 void main() {
     vec2 fragCoord = gl_FragCoord.xy;
-    vec2 uv = (fragCoord - .5 * iResolution.xy) / iResolution.y;
     vec2 UV = fragCoord / iResolution.xy;
+    vec2 uv = UV;
+    uv.x *= iResolution.x / iResolution.y;
 
-    float T = iTime;
-    float t = T * .15;
-    float snowAmount = uAmount;
+    float t = iTime;
 
-    float maxBlur = mix(2., 4., snowAmount);
-    float minBlur = 2.;
+    // ===== 背景：雪山夜景 =====
+    // 天空渐变
+    vec3 sky = mix(vec3(0.03, 0.05, 0.10),
+                   vec3(0.14, 0.20, 0.32),
+                   UV.y);
 
-    uv *= 1.5;
+    // 远山轮廓（sin 波叠加）
+    float mx = uv.x * 2.3 + 1.2;
+    float mountainY = 0.52
+                    + 0.09 * sin(mx * 1.0 + 1.2)
+                    + 0.04 * sin(mx * 2.5 + 3.1)
+                    + 0.02 * sin(mx * 5.7 + 0.6);
+    float mountain = 1.0 - smoothstep(mountainY, mountainY + 0.03, UV.y);
+    vec3  mCol = mix(vec3(0.10, 0.14, 0.22),
+                     vec3(0.18, 0.24, 0.36),
+                     UV.y);
 
-    float staticSnow = S(-.5, 1., snowAmount) * 2.;
-    float layer1 = S(.25, .75, snowAmount);
-    float layer2 = S(.0, .5, snowAmount);
+    // 近景树林
+    float forestY = 0.78 + 0.015 * sin(uv.x * 22.0)
+                         + 0.01  * sin(uv.x * 41.0 + 1.3);
+    float forest = 1.0 - smoothstep(forestY, forestY + 0.015, UV.y);
+    vec3  fCol = vec3(0.02, 0.035, 0.06);
 
-    vec2 c = Snow(uv, t, staticSnow, layer1, layer2);
-    vec2 n = vec2(dFdx(c.x), dFdy(c.x));
+    vec3 col = sky;
+    col = mix(col, mCol, mountain * 0.85);
+    col = mix(col, fCol, forest * 0.9);
 
-    float focus = mix(maxBlur - c.y, minBlur, S(.1, .2, c.x));
-    vec3 col = textureLod(iChannel0, UV + n, focus).rgb;
+    // ===== 雪花 =====
+    float amount = uAmount;
+    float d1 = smoothstep(0.05, 0.6, amount);
+    float d2 = smoothstep(0.15, 0.8, amount);
+    float d3 = smoothstep(0.25, 0.95, amount);
 
-    col *= vec3(.95, 1.0, 1.1);
+    float snow = 0.0;
+    snow += snowLayer(uv,        t, 3.0, 0.10, 1.6, d1 * 0.35) * 0.55;
+    snow += snowLayer(uv + 17.0, t, 6.0, 0.20, 1.1, d1 * 0.55) * 0.75;
+    snow += snowLayer(uv + 42.0, t, 12.0, 0.35, 0.8, d2 * 0.75) * 0.95;
+    snow += snowLayer(uv + 88.0, t, 24.0, 0.55, 0.55, d3 * 0.85) * 0.9;
+    snow += snowLayer(uv + 133.0, t, 48.0, 0.85, 0.35, d3) * 0.7;
 
-    UV -= .5;
-    col *= 1. - dot(UV, UV) * 0.5;
+    col += snow * vec3(0.95, 0.97, 1.0);
 
-    fragColor = vec4(col, 1.);
+    // vignette
+    UV -= 0.5;
+    col *= 1.0 - dot(UV, UV) * 0.4;
+
+    fragColor = vec4(col, 1.0);
 }
 `;

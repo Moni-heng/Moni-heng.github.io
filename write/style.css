@@ -289,3 +289,18 @@ html, body {
   height: 100%;
   font-family: inherit;
 }
+
+/* 字体方案 */
+body.font-sans {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+               "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+}
+body.font-serif {
+  font-family: "Noto Serif SC", "Songti SC", "STSong", serif;
+}
+body.font-kai {
+  font-family: "LXGW WenKai", "Kaiti SC", "STKaiti", cursive;
+}
+body.font-xiao {
+  font-family: "ZCOOL XiaoWei", "Songti SC", serif;
+}
